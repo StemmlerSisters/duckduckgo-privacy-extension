@@ -1,15 +1,36 @@
 /* Font variables */
 $font__size--default: 14px;
-$font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
+$font__face--default: 'DDG_ProximaNova', 'Helvetica Neue', 'Helvetica', 'Segoe UI', 'Nimbus Sans L', 'Liberation Sans', 'Open Sans',
+    FreeSans, Arial, sans-serif;
 
 /* Status icons */
-$status--good: "status--good.svg";
-$status--mixed: "status--mixed.svg";
-$status--bad: "status--bad.svg";
-$status--info: "status--info.svg";
+$status--good: 'status--good.svg';
+$status--mixed: 'status--mixed.svg';
+$status--bad: 'status--bad.svg';
+$status--info: 'status--info.svg';
 
 /* Colors */
-@import "../../node_modules/duckduckgo-colors/colors";
+$white: #ffffff;
+$silver-light: #f7f7f7;
+$silver: #f2f2f2;
+$silver-dark: #ededed;
+$platinum-light: #e5e5e5;
+$platinum: #e0e0e0;
+$platinum-dark: #d0d0d0;
+$platinum-darker: #c3c3c3;
+$grey-light: #aaaaaa;
+$grey: #999999;
+$grey-dark: #888888;
+$slate-light: #666666;
+$slate-light-blue: #434a50;
+$slate: #333333;
+$slate-blue: #34383b;
+
+$blue: #4495d4;
+$blue-dark: #00278e;
+$blue-light: #66abff;
+
+$red: #de5833;
 $color--green: #3fa248;
 $color--dark-green: #29521f;
 $color--orange: #f89f22;
@@ -49,7 +70,7 @@ $hamburger-button__color: #afafaf;
 $hamburger-menu__bg-color: $slate;
 
 /* The ratings we give */
-$ratings: ("a", "b-plus", "b", "c", "c-plus", "d", "f");
+$ratings: ('a', 'b-plus', 'b', 'c', 'c-plus', 'd', 'f');
 
 /* Cards */
 $card__bg-color: $white;

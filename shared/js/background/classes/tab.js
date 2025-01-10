@@ -14,13 +14,13 @@
  *      }
  */
 
-const Site = require('./site').default
-const { Tracker } = require('./tracker')
-const HttpsRedirects = require('./https-redirects')
-const Companies = require('../companies')
-const webResourceKeyRegex = /.*\?key=(.*)/
-const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
-const { TabState } = require('./tab-state')
+const Site = require('./site').default;
+const { Tracker } = require('./tracker');
+const HttpsRedirects = require('./https-redirects');
+const Companies = require('../companies');
+const webResourceKeyRegex = /.*\?key=(.*)/;
+const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy');
+const { TabState } = require('./tab-state');
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
@@ -28,238 +28,278 @@ class Tab {
     /**
      * @param {TabData|TabState} tabData
      */
-    constructor (tabData) {
+    constructor(tabData) {
         if (tabData instanceof TabState) {
             /** @type {TabState} */
-            this._tabState = tabData
+            this._tabState = tabData;
         } else {
             /** @type {TabState} */
-            this._tabState = new TabState(tabData)
+            this._tabState = new TabState(tabData);
         }
 
-        this.site = new Site(this.url, this._tabState)
-        this.httpsRedirects = new HttpsRedirects()
-        this.webResourceAccess = []
-        this.surrogates = {}
+        this.site = new Site(this.url, this._tabState);
+        this.httpsRedirects = new HttpsRedirects();
+        this.webResourceAccess = [];
+        this.surrogates = {};
     }
 
     /**
      * @param {number} tabId
      */
-    static async restore (tabId) {
-        const state = await TabState.restore(tabId)
+    static async restore(tabId) {
+        const state = await TabState.restore(tabId);
         if (!state) {
-            return null
+            return null;
         }
-        return new Tab(state)
+        return new Tab(state);
     }
 
-    set referrer (value) {
-        this._tabState.setValue('referrer', value)
+    set referrer(value) {
+        this._tabState.setValue('referrer', value);
     }
 
-    get referrer () {
-        return this._tabState.referrer
+    get referrer() {
+        return this._tabState.referrer;
     }
 
-    set adClick (value) {
-        this._tabState.setValue('adClick', value)
+    set adClick(value) {
+        this._tabState.setValue('adClick', value);
     }
 
-    get adClick () {
-        return this._tabState.adClick
+    get adClick() {
+        return this._tabState.adClick;
     }
 
-    set disabledClickToLoadRuleActions (value) {
-        this._tabState.setValue('disabledClickToLoadRuleActions', value)
+    set firstAdAttributionAllowed(value) {
+        this._tabState.setValue('firstAdAttributionAllowed', value);
     }
 
-    get disabledClickToLoadRuleActions () {
-        return this._tabState.disabledClickToLoadRuleActions
+    get firstAdAttributionAllowed() {
+        return this._tabState.firstAdAttributionAllowed;
     }
 
-    set dnrRuleIdsByDisabledClickToLoadRuleAction (value) {
-        this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value)
+    set disabledClickToLoadRuleActions(value) {
+        this._tabState.setValue('disabledClickToLoadRuleActions', value);
     }
 
-    get dnrRuleIdsByDisabledClickToLoadRuleAction () {
-        return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction
+    get disabledClickToLoadRuleActions() {
+        return this._tabState.disabledClickToLoadRuleActions;
     }
 
-    set trackers (value) {
-        this._tabState.setValue('trackers', value)
+    set dnrRuleIdsByDisabledClickToLoadRuleAction(value) {
+        this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value);
     }
 
-    get trackers () {
-        return this._tabState.trackers
+    get dnrRuleIdsByDisabledClickToLoadRuleAction() {
+        return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction;
     }
 
-    get url () {
-        return this._tabState.url
+    set trackers(value) {
+        this._tabState.setValue('trackers', value);
     }
 
-    set url (url) {
-        this._tabState.setValue('url', url)
+    get trackers() {
+        return this._tabState.trackers;
     }
 
-    get id () {
-        return this._tabState.tabId
+    get url() {
+        return this._tabState.url;
     }
 
-    set id (tabId) {
-        this._tabState.setValue('tabId', tabId)
+    set url(url) {
+        this._tabState.setValue('url', url);
     }
 
-    get upgradedHttps () {
-        return this._tabState.upgradedHttps
+    get id() {
+        return this._tabState.tabId;
     }
 
-    set upgradedHttps (value) {
-        this._tabState.setValue('upgradedHttps', value)
+    set id(tabId) {
+        this._tabState.setValue('tabId', tabId);
     }
 
-    get hasHttpsError () {
-        return this._tabState.hasHttpsError
+    get upgradedHttps() {
+        return this._tabState.upgradedHttps;
     }
 
-    set hasHttpsError (value) {
-        this._tabState.setValue('hasHttpsError', value)
+    set upgradedHttps(value) {
+        this._tabState.setValue('upgradedHttps', value);
     }
 
-    get mainFrameUpgraded () {
-        return this._tabState.mainFrameUpgraded
+    get hasHttpsError() {
+        return this._tabState.hasHttpsError;
     }
 
-    set mainFrameUpgraded (value) {
-        this._tabState.setValue('mainFrameUpgraded', value)
+    set hasHttpsError(value) {
+        this._tabState.setValue('hasHttpsError', value);
     }
 
-    get urlParametersRemoved () {
-        return this._tabState.urlParametersRemoved
+    get mainFrameUpgraded() {
+        return this._tabState.mainFrameUpgraded;
     }
 
-    set urlParametersRemoved (value) {
-        this._tabState.setValue('urlParametersRemoved', value)
+    set mainFrameUpgraded(value) {
+        this._tabState.setValue('mainFrameUpgraded', value);
     }
 
-    get urlParametersRemovedUrl () {
-        return this._tabState.urlParametersRemovedUrl
+    get urlParametersRemoved() {
+        return this._tabState.urlParametersRemoved;
     }
 
-    set urlParametersRemovedUrl (value) {
-        this._tabState.setValue('urlParametersRemovedUrl', value)
+    set urlParametersRemoved(value) {
+        this._tabState.setValue('urlParametersRemoved', value);
     }
 
-    get ampUrl () {
-        return this._tabState.ampUrl
+    get urlParametersRemovedUrl() {
+        return this._tabState.urlParametersRemovedUrl;
     }
 
-    set ampUrl (url) {
-        this._tabState.setValue('ampUrl', url)
+    set urlParametersRemovedUrl(value) {
+        this._tabState.setValue('urlParametersRemovedUrl', value);
     }
 
-    get cleanAmpUrl () {
-        return this._tabState.cleanAmpUrl
+    get ampUrl() {
+        return this._tabState.ampUrl;
     }
 
-    get requestId () {
-        return this._tabState.requestId
+    set ampUrl(url) {
+        this._tabState.setValue('ampUrl', url);
     }
 
-    set cleanAmpUrl (url) {
-        this._tabState.setValue('cleanAmpUrl', url)
+    get cleanAmpUrl() {
+        return this._tabState.cleanAmpUrl;
     }
 
-    get status () {
-        return this._tabState.status
+    get requestId() {
+        return this._tabState.requestId;
     }
 
-    set status (value) {
-        this._tabState.setValue('status', value)
+    set cleanAmpUrl(url) {
+        this._tabState.setValue('cleanAmpUrl', url);
     }
 
-    get statusCode () {
-        return this._tabState.statusCode
+    get status() {
+        return this._tabState.status;
     }
 
-    set statusCode (value) {
-        this._tabState.setValue('statusCode', value)
+    set status(value) {
+        this._tabState.setValue('status', value);
     }
 
-    get ctlYouTube () {
-        return this._tabState.ctlYouTube
+    get statusCode() {
+        return this._tabState.statusCode;
     }
 
-    set ctlYouTube (value) {
-        this._tabState.setValue('ctlYouTube', value)
+    set statusCode(value) {
+        this._tabState.setValue('statusCode', value);
     }
 
-    get ctlFacebookPlaceholderShown () {
-        return this._tabState.ctlFacebookPlaceholderShown
+    get ctlYouTube() {
+        return this._tabState.ctlYouTube;
     }
 
-    set ctlFacebookPlaceholderShown (value) {
-        this._tabState.setValue('ctlFacebookPlaceholderShown', value)
+    set ctlYouTube(value) {
+        this._tabState.setValue('ctlYouTube', value);
     }
 
-    get ctlFacebookLogin () {
-        return this._tabState.ctlFacebookLogin
+    get ctlFacebookPlaceholderShown() {
+        return this._tabState.ctlFacebookPlaceholderShown;
     }
 
-    set ctlFacebookLogin (value) {
-        this._tabState.setValue('ctlFacebookLogin', value)
+    set ctlFacebookPlaceholderShown(value) {
+        this._tabState.setValue('ctlFacebookPlaceholderShown', value);
     }
 
-    get debugFlags () {
-        return this._tabState.debugFlags
+    get ctlFacebookLogin() {
+        return this._tabState.ctlFacebookLogin;
     }
 
-    set debugFlags (value) {
-        this._tabState.setValue('debugFlags', value)
+    set ctlFacebookLogin(value) {
+        this._tabState.setValue('ctlFacebookLogin', value);
     }
 
-    get errorDescriptions () {
-        return this._tabState.errorDescriptions
+    get debugFlags() {
+        return this._tabState.debugFlags;
     }
 
-    set errorDescriptions (value) {
-        this._tabState.setValue('errorDescriptions', value)
+    set debugFlags(value) {
+        this._tabState.setValue('debugFlags', value);
     }
 
-    get httpErrorCodes () {
-        return this._tabState.httpErrorCodes
+    get errorDescriptions() {
+        return this._tabState.errorDescriptions;
     }
 
-    set httpErrorCodes (value) {
-        this._tabState.setValue('httpErrorCodes', value)
+    set errorDescriptions(value) {
+        this._tabState.setValue('errorDescriptions', value);
     }
 
-    get performanceWarning () {
-        return this._tabState.performanceWarning
+    get httpErrorCodes() {
+        return this._tabState.httpErrorCodes;
     }
 
-    set performanceWarning (value) {
-        this._tabState.setValue('performanceWarning', value)
+    set httpErrorCodes(value) {
+        this._tabState.setValue('httpErrorCodes', value);
+    }
+
+    get performanceWarning() {
+        return this._tabState.performanceWarning;
+    }
+
+    set performanceWarning(value) {
+        this._tabState.setValue('performanceWarning', value);
+    }
+
+    get userRefreshCount() {
+        return this._tabState.userRefreshCount;
+    }
+
+    set userRefreshCount(value) {
+        this._tabState.setValue('userRefreshCount', value);
+    }
+
+    get openerContext() {
+        return this._tabState.openerContext;
+    }
+
+    set openerContext(value) {
+        this._tabState.setValue('openerContext', value);
+    }
+
+    get jsPerformance() {
+        return this._tabState.jsPerformance;
+    }
+
+    set jsPerformance(value) {
+        this._tabState.setValue('jsPerformance', value);
+    }
+
+    get locale() {
+        return this._tabState.locale;
+    }
+
+    set locale(value) {
+        this._tabState.setValue('locale', value);
     }
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
      */
-    setAdClickIfValidRedirect (requestURL) {
-        const policy = this.getAdClickAttributionPolicy()
-        const adClick = policy.createAdClick(requestURL, this)
+    setAdClickIfValidRedirect(requestURL) {
+        const policy = this.getAdClickAttributionPolicy();
+        const adClick = policy.createAdClick(requestURL, this);
         if (adClick) {
-            this.adClick = adClick
+            this.adClick = adClick;
         }
     }
 
     /**
      * @returns {AdClickAttributionPolicy}
      */
-    getAdClickAttributionPolicy () {
-        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy()
-        return this._adClickAttributionPolicy
+    getAdClickAttributionPolicy() {
+        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy();
+        return this._adClickAttributionPolicy;
     }
 
     /**
@@ -267,17 +307,23 @@ class Tab {
      * @param {string} resourcePath
      * @returns {boolean}
      */
-    allowAdAttribution (resourcePath) {
-        if (!this.site.isFeatureEnabled('adClickAttribution') || !this.adClick || !this.adClick.allowAdAttribution(this)) return false
-        const policy = this.getAdClickAttributionPolicy()
-        return policy.resourcePermitted(resourcePath)
+    allowAdAttribution(resourcePath) {
+        if (!this.site.isFeatureEnabled('adClickAttribution') || !this.adClick || !this.adClick.allowAdAttribution(this)) return false;
+        const policy = this.getAdClickAttributionPolicy();
+        const permitted = policy.resourcePermitted(resourcePath);
+        if (permitted) {
+            this.adClick.requestWasAllowed(this);
+        }
+
+        return permitted;
     }
 
-    updateSite (url) {
-        if (this.site.url === url) return
+    updateSite(url) {
+        if (this.site.url === url) return;
 
-        this.url = url
-        this.site = new Site(url, this._tabState)
+        this.url = url;
+        this.site = new Site(url, this._tabState);
+        this.userRefreshCount = 0;
     }
 
     // Store all trackers for a given tab even if we don't block them.
@@ -287,23 +333,23 @@ class Tab {
      * @param {string} url
      * @returns {Tracker}
      */
-    addToTrackers (t, baseDomain, url) {
-        const trackers = this.trackers
-        const tracker = this.trackers[t.tracker.owner.name]
+    addToTrackers(t, baseDomain, url) {
+        const trackers = this.trackers;
+        const tracker = this.trackers[t.tracker.owner.name];
 
         if (tracker) {
-            tracker.addTrackerUrl(t, this.url || '', baseDomain, url)
+            tracker.addTrackerUrl(t, this.url || '', baseDomain, url);
         } else if (t.tracker) {
-            const newTracker = new Tracker(t)
-            newTracker.addTrackerUrl(t, this.url || '', baseDomain, url)
-            this.trackers[t.tracker.owner.name] = newTracker
+            const newTracker = new Tracker(t);
+            newTracker.addTrackerUrl(t, this.url || '', baseDomain, url);
+            this.trackers[t.tracker.owner.name] = newTracker;
 
             // first time we have seen this network tracker on the page
-            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
+            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner);
         }
         // Set the trackers on the tab which will trigger a state update
-        this.trackers = trackers
-        return this.trackers[t.tracker.owner.name]
+        this.trackers = trackers;
+        return this.trackers[t.tracker.owner.name];
     }
 
     /**
@@ -311,11 +357,11 @@ class Tab {
      * @param {string} resourceName URL to the web accessible resource
      * @returns {string} generated access key
      **/
-    addWebResourceAccess (resourceName) {
+    addWebResourceAccess(resourceName) {
         // random 8-9 character key for web resource access
-        const key = Math.floor(Math.random() * 10000000000).toString(16)
-        this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
-        return key
+        const key = Math.floor(Math.random() * 10000000000).toString(16);
+        this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false });
+        return key;
     }
 
     /**
@@ -325,29 +371,29 @@ class Tab {
      * @param {string} resourceURL web accessible resource URL
      * @returns {boolean} is access to the resource allowed
      **/
-    hasWebResourceAccess (resourceURL) {
+    hasWebResourceAccess(resourceURL) {
         // no record of web resource access for this tab
         if (!this.webResourceAccess.length) {
-            return false
+            return false;
         }
 
-        const keyMatches = webResourceKeyRegex.exec(resourceURL)
+        const keyMatches = webResourceKeyRegex.exec(resourceURL);
         if (!keyMatches) {
-            return false
+            return false;
         }
 
-        const key = keyMatches[1]
-        const hasAccess = this.webResourceAccess.some(resource => {
+        const key = keyMatches[1];
+        const hasAccess = this.webResourceAccess.some((resource) => {
             if (resource.key === key && !resource.wasAccessed) {
-                resource.wasAccessed = true
-                if ((Date.now() - resource.time) < 1000) {
-                    return true
+                resource.wasAccessed = true;
+                if (Date.now() - resource.time < 1000) {
+                    return true;
                 }
             }
-            return false
-        })
+            return false;
+        });
 
-        return hasAccess
+        return hasAccess;
     }
 
     /**
@@ -357,16 +403,16 @@ class Tab {
      *
      * @param {string} url - the url to set ampUrl to
      */
-    setAmpUrl (url) {
+    setAmpUrl(url) {
         if (this.ampUrl) {
-            const ampUrl = new URL(this.ampUrl)
-            const newUrl = new URL(url)
+            const ampUrl = new URL(this.ampUrl);
+            const newUrl = new URL(url);
             if (ampUrl.hostname.includes('google') && ampUrl.pathname.includes(newUrl.hostname)) {
-                return
+                return;
             }
         }
 
-        this.ampUrl = url
+        this.ampUrl = url;
     }
 
     /**
@@ -375,9 +421,9 @@ class Tab {
      * @param {string} action
      * @param {Object} message
      */
-    postDevtoolsMessage (devtools, action, message) {
-        devtools.postMessage(this.id, action, message)
+    postDevtoolsMessage(devtools, action, message) {
+        devtools.postMessage(this.id, action, message);
     }
 }
 
-module.exports = Tab
+module.exports = Tab;

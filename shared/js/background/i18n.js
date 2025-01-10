@@ -1,14 +1,30 @@
-import browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill';
 
-export function getUserLocale () {
+export function getUserLocale() {
     if (!browser?.i18n) {
-        return 'en'
+        return 'en';
     }
     // returns browser locale with country suffix removed
-    const lang = browser.i18n.getUILanguage().slice(0, 2)
+    const lang = browser.i18n.getUILanguage().slice(0, 2);
     // handle Norwegian locales
     if (['nn', 'no'].includes(lang)) {
-        return 'nb'
+        return 'nb';
     }
-    return lang
+    return lang;
+}
+
+export function getFullUserLocale() {
+    if (!browser?.i18n) {
+        return 'en-US';
+    }
+
+    return browser.i18n.getUILanguage();
+}
+
+export function getUserLocaleCountry() {
+    try {
+        return getFullUserLocale().split('-')[1];
+    } catch (e) {
+        return '';
+    }
 }

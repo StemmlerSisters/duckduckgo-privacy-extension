@@ -2,8 +2,8 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2024.4.26",
-    "minimum_chrome_version": "121.0",
+    "version": "2025.1.10",
+    "minimum_chrome_version": "128.0",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -55,6 +55,20 @@
             "run_at": "document_start",
             "match_origin_as_fallback": true,
             "match_about_blank": true
+        },
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
+            ],
+            "match_about_blank": true,
+            "run_at": "document_start",
+            "js": [
+                "public/js/content-scripts/breakage-stats.js"
+            ]
         }
     ],
     "permissions": [

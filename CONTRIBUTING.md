@@ -6,7 +6,7 @@ Report broken websites using the "Report Broken Site" link on the extension popu
 
 # Reporting bugs
 
-1. First check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
+1. First, check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
 2. Create a bug report [issue](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/new?template=bug_report.md).
 
 # Feature requests
@@ -23,7 +23,7 @@ Right now all new feature development is handled internally.
 
 ## Bug fixes
 
-Most bug fixes are handled internally, but we will except pull requests for bug fixes if you first:
+Most bug fixes are handled internally, but we will accept pull requests for bug fixes if you first:
 1. Create an issue describing the bug. see [Reporting bugs](CONTRIBUTING.md#reporting-bugs)
 2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with any current projects.
 
@@ -55,7 +55,7 @@ Note: Development builds of the extension have a few differences from the releas
 
 #### Release builds
 
-- Release builds can be produced in much the same was as the development builds, but by using the `npm run release-chrome` and `npm run release-firefox` commands.
+- Release builds can be generated in a manner similar to development builds. However, instead of the development build commands, the `npm run release-chrome` and `npm run release-firefox` commands should be used.
 - These builds are stored in the `build/chrome/release` and `build/firefox/release` directories respectively.
 
 ### Updating or testing config
@@ -107,10 +107,14 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 
 ### Linting
 - All linting: `npm run lint`
-    - This includes both the ESLint and TypeScript checks.
+    - This includes the ESLint and TypeScript checks as well as Prettier style checks.
+    - To automatically fix all lint issues: `npm run lint-fix`
 - ESLint linting: `npm run eslint`
     - To automatically fix mistakes found (where possible) use: `npm run eslint-fix`
 - TypeScript Linting: `npm run tsc`
+- Prettier linting: `npm run prettier`
+    - To automatically fix style issues use: `npm run prettier-fix`
+    - Since Prettier rules are stylistic-only, it is okay to add `// prettier-ignore` comments to ignore specific lines or blocks of code.
 
 ### Testing
 - Unit tests: `npm test` (full docs [here](./unit-test/README.md))

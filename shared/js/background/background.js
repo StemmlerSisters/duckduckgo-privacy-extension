@@ -15,32 +15,38 @@
  */
 /* global DEBUG, RELOADER, BUILD_TARGET */
 
-import { onStartup } from './startup'
-import FireButton from './components/fire-button'
-import TabTracker from './components/tab-tracking'
-import MV3ContentScriptInjection from './components/mv3-content-script-injection'
-import EmailAutofill from './components/email-autofill'
-import OmniboxSearch from './components/omnibox-search'
-import InternalUserDetector from './components/internal-user-detector'
-import TDSStorage from './components/tds'
-import TrackersGlobal from './components/trackers'
-import DebuggerConnection from './components/debugger-connection'
-import initDebugBuild from './devbuild'
-import initReloader from './devbuild-reloader'
-import tabManager from './tab-manager'
+import { onStartup } from './startup';
+import FireButton from './components/fire-button';
+import TabTracker from './components/tab-tracking';
+import MV3ContentScriptInjection from './components/mv3-content-script-injection';
+import EmailAutofill from './components/email-autofill';
+import OmniboxSearch from './components/omnibox-search';
+import InternalUserDetector from './components/internal-user-detector';
+import TDSStorage from './components/tds';
+import ToggleReports from './components/toggle-reports';
+import TrackersGlobal from './components/trackers';
+import DebuggerConnection from './components/debugger-connection';
+import Devtools from './components/devtools';
+import DNRListeners from './components/dnr-listeners';
+import RemoteConfig from './components/remote-config';
+import initDebugBuild from './devbuild';
+import initReloader from './devbuild-reloader';
+import tabManager from './tab-manager';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
-require('./events')
-const settings = require('./settings')
+require('./events');
+const settings = require('./settings');
 if (BUILD_TARGET === 'chrome') {
-    require('./dnr-config-rulesets')
+    require('./dnr-config-rulesets');
 }
 
 settings.ready().then(() => {
-    onStartup()
-})
+    onStartup();
+});
 
-const tds = new TDSStorage({ settings })
+const remoteConfig = new RemoteConfig({ settings });
+const tds = new TDSStorage({ settings, remoteConfig });
+const devtools = new Devtools({ tds });
 /**
  * @type {{
  *  autofill: EmailAutofill;
@@ -50,31 +56,36 @@ const tds = new TDSStorage({ settings })
  *  tds: TDSStorage;
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
+ *  remoteConfig: RemoteConfig;
  * }}
  */
 const components = {
     autofill: new EmailAutofill({ settings }),
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
-    tabTracking: new TabTracker({ tabManager }),
+    tabTracking: new TabTracker({ tabManager, devtools }),
     tds,
+    toggleReports: new ToggleReports(),
     trackers: new TrackersGlobal({ tds }),
-    debugger: new DebuggerConnection({ tds })
-}
+    debugger: new DebuggerConnection({ tds, devtools }),
+    devtools,
+    remoteConfig,
+};
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
-    components.fireButton = new FireButton({ settings, tabManager })
+    components.fireButton = new FireButton({ settings, tabManager });
 }
 // MV3-only components
 if (BUILD_TARGET === 'chrome') {
-    components.scriptInjection = new MV3ContentScriptInjection()
+    components.scriptInjection = new MV3ContentScriptInjection();
+    components.dnrListeners = new DNRListeners({ settings, tds });
 }
-console.log(new Date(), 'Loaded components:', components)
+console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
-self.components = components
+self.components = components;
 
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
-DEBUG && initDebugBuild()
-RELOADER && initReloader()
+DEBUG && initDebugBuild();
+RELOADER && initReloader();
